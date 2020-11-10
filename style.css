@@ -1,0 +1,64 @@
+:root {
+    --hyper-orange: #eb8e00;
+    --hyper-blue: #293c4f;
+}
+
+html {
+	padding: 0;
+}
+
+header {
+	background-color: var(--hyper-blue);
+	height : 10vh;
+}
+
+h1 {
+	color: var(--hyper-orange);
+	background-color: pink;
+	display: inline-block;
+}
+
+nav {
+	color: var(--hyper-orange);
+	background-color: green;
+	float: right;
+	height: 100%;
+	width: 30vw;
+}
+
+.log {
+	float: right;
+}
+
+nav ul {
+	margin: 0;
+	list-style-type: none;
+	background-color: yellow;
+	height: 100%;
+	padding: 0;
+	width: 100%;
+}
+
+nav li {
+	margin: auto;
+	background-color: red;
+	width: 49%;
+	height: 100%;
+}
+
+nav a {
+	display: inline-block;
+	text-decoration: none;
+	color: inherit;
+	background-color: cyan;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	/* vertical-align: center; */
+	line-height: 70px;
+	font-size: 2vw;
+}
+
+nav a:visited {
+	color: inherit;
+}
