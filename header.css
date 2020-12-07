@@ -1,11 +1,6 @@
-:root {
-    --hyper-orange: #eb8e00;
-    --hyper-dark-orange: #d98300;
-    --hyper-blue: #293c4f;
-}
+@import 'global.css';
 
-body
-{
+body {
     margin: 0;
 }
 

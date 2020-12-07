@@ -1,0 +1,84 @@
+@import 'global.css';
+
+/* The Modal (background) */
+.popup {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    /* padding-top: 100px; */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 25px;
+    border-radius: 7px;
+}
+
+.popup-content ul {
+	list-style: none;
+	text-align: center;
+	padding: 0;
+	margin: 0;
+	color: var(--hyper-blue);
+	font-weight: bold;
+}
+
+.popup-content label {
+	display: inline-block;
+	margin-bottom: 10px;
+}
+
+.popup-content ul li {
+	margin-bottom: 25px;
+}
+
+.popup-content li:last-child {
+	padding-top: 20px;
+	margin-bottom: 0;
+}
+
+.text-input {
+    width: 296px;
+}
+
+.popup-content input{
+	color: var(--hyper-blue);
+}
+
+.popup-content input:focus {
+	outline-color: var(--hyper-orange);
+}
+
+.close-icon {
+    align-self: flex-end;
+    width: 15px;
+}
+
+.close-icon:hover,
+.close-icon:focus {
+    content: url("images/close-icon-hover.svg");
+    cursor: pointer;
+}
+
+.submit-button {
+    font-family: 'Montserrat';
+    font-weight: bold;
+    background: #fefefe;
+    border: 2px solid var(--hyper-blue);
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background: var(--hyper-blue);
+    color: #fefefe;
+}

@@ -4,8 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hyper Tournoi</title>
-    <link href="favicon.ico" rel="icon">
+    <link href="images/favicon.ico" rel="icon">
+
     <link href="header.css" rel="stylesheet">
+    <link href="popup.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Quicksand&display=swap" rel="stylesheet">
+
+    <script src="popup.js" defer></script>
 </head>
 
 <body>
@@ -16,7 +23,7 @@
 
     <!-- Liste de nos evenements -->
     <h2>Mes évènements à venir</h2>
-    <h2>Créer un nouvel évènement</h2>
+    <button class="popup-button">Créer un nouvel évènement</button>
     <?php
     // todo: get user id
     foreach ($dbh->query("SELECT * FROM Evenement") as $event) {
@@ -25,23 +32,26 @@
     }
     ?>
 
-    <!-- Bouton "Organiser un evenenement" qui ouvre une pop-up -->
     <div class="popup">
-        <form action="createEvent.php" method="get" class="form-organize">
-            <label for="event-name">Nom: </label>
-            <input type="text" name="event-name" id="event-name" required>
+        <div class="popup-content">
+            <img src="images/close-icon.svg" alt="close" class="close-icon">
+            <form action="createEvent.php" method="get" class="form-organize">
+                <ul>
+                    <li><label for="event-name">Nom</label><br>
+                    <input type="text" name="event-name" id="event-name" class="text-input" required></li>
 
-            <label for="event-location">Lieu: </label>
-            <input type="text" name="event-location" id="event-location" required>
+                    <li><label for="event-location">Lieu</label><br>
+                    <input type="text" name="event-location" id="event-location" class="text-input" required></li>
 
-            <label for="event-start-date1">Date : du </label>
-            <input type="date" name="event-start-date" id="event-start-date" required>
+                    <li><label for="event-start-date">Date</label><br>
+                    <input type="date" name="event-start-date" id="event-start-date" required>
+                    <label for="event-end-date"> &minus; </label>
+                    <input type="date" name="event-end-date" id="event-end-date" required></li>
 
-            <label for="event-end-date"> au </label>
-            <input type="date" name="event-end-date" id="event-end-date" required>
-
-            <input type="submit" value="organiser">
-        </form>
+                    <li><input type="submit" value="Créer" class="submit-button"></li>
+                </ul>
+            </form>
+        </div>
     </div>
 </body>
 </html>
