@@ -7,9 +7,9 @@
     <link href="favicon.ico" rel="icon">
     <link href="header.css" rel="stylesheet">
 </head>
+
 <body>
-    <?php
-    include("header.html");
-    ?>
+    <?php include("header.html");?>
+    <p>Evenement bien créé</p>
 </body>
 </html>
