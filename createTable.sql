@@ -14,6 +14,7 @@ CREATE TABLE Evenement (
     idEvenement SERIAL PRIMARY KEY,
     nom VARCHAR(50),
     lieu VARCHAR(50),
+    nbTerrains INT,
     dateDebut DATE,
     dateFin DATE
 );
@@ -22,26 +23,32 @@ CREATE TABLE Tournoi (
     idTournoi SERIAL PRIMARY KEY,
     idEvenement INT,
     nom VARCHAR(50),
-    typeJeu VARCHAR(30),
     sport VARCHAR(20),
+    typeJeu VARCHAR(30),
     CONSTRAINT FK_Evenement
         FOREIGN KEY(idEvenement) REFERENCES Evenement(idEvenement)
 );
 
-CREATE TABLE Terrain (
-    idTerrain SERIAL PRIMARY KEY,
-    numTerrain INT
+CREATE TABLE CommenceApres (
+    idTournoi INT,
+    idTournoiSuivant INT,
+    numTour INT,
+    sousTournoi BOOLEAN,
+    CONSTRAINT PK_CommenceApres
+        PRIMARY KEY(idTournoi, idTournoiSuivant),
+    CONSTRAINT FK_Tournoi
+        FOREIGN KEY(idTournoi) REFERENCES Tournoi(idTournoi),
+    CONSTRAINT FK_TournoiSuivant
+        FOREIGN KEY(idTournoiSuivant) REFERENCES Tournoi(idTournoi)
 );
 
-CREATE TABLE Dispose (
-    idEvenement INT,
-    idTerrain INT,
-    CONSTRAINT PK_Dispose
-        PRIMARY KEY(idEvenement, idTerrain),
-    CONSTRAINT FK_Evenement
-        FOREIGN KEY(idEvenement) REFERENCES Evenement(idEvenement),
-    CONSTRAINT FK_Terrain
-        FOREIGN KEY(idTerrain) REFERENCES Terrain(idTerrain)
+CREATE TABLE Tour (
+    idTour SERIAL PRIMARY KEY,
+    idTournoi INT,
+    numero INT CHECK(numero >= 1),
+    composition VARCHAR(100),
+    CONSTRAINT FK_Tournoi
+        FOREIGN KEY(idTournoi) REFERENCES Tournoi(idTournoi)
 );
 
 CREATE TABLE Equipe (
@@ -85,9 +92,11 @@ CREATE TABLE Membre (
 
 CREATE TABLE Poule (
     idPoule SERIAL PRIMARY KEY,
-    idTerrain INT,
-    CONSTRAINT FK_Terrain
-        FOREIGN KEY(idTerrain) REFERENCES Terrain(idTerrain)
+    idTour INT,
+    numero INT,
+    numTerrain INT,
+    CONSTRAINT FK_Tour
+        FOREIGN KEY(idTour) REFERENCES Tour(idTour)
 );
 
 CREATE TABLE Compose (
@@ -103,12 +112,10 @@ CREATE TABLE Compose (
 
 CREATE TABLE Match (
     idMatch SERIAL PRIMARY KEY,
-    idPoule INT,
     idEquipe1 INT,
     idEquipe2 INT,
     vainqueur INT,
     score VARCHAR(15),
-    numTour INT,
     code VARCHAR(10),
     dateDebut DATE,
     dateFin DATE,
@@ -121,3 +128,6 @@ CREATE TABLE Match (
     CONSTRAINT FK_Vainqueur
         FOREIGN KEY(vainqueur) REFERENCES Equipe(idEquipe)
 );
+
+INSERT INTO Tournoi (idEvenement, nom, typejeu, sport)
+VALUES (12, 'Tournoi de 3x3 du 10 decembre', '3x3', 'Petanque');
