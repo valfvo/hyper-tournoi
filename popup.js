@@ -9,12 +9,12 @@ popupButton.onclick = function() {
 
 closeIcon.onclick = function() {
   popup.style.display = 'none';
-  document.body.style.overflow = 'scroll';
+  document.body.style.overflow = 'visible';
 }
 
 window.onclick = function(event) {
   if (event.target == popup) {
     popup.style.display = 'none';
-    document.body.style.overflow = 'scroll';
+    document.body.style.overflow = 'visible';
   }
 }

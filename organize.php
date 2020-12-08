@@ -1,3 +1,4 @@
+<?php session_start();?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hyper Tournoi</title>
     <link href="images/favicon.ico" rel="icon">
+    <link rel="preload" href="images/close-icon-hover.svg" as="image">
 
     <link href="header.css" rel="stylesheet">
     <link href="popup.css" rel="stylesheet">
@@ -24,13 +26,23 @@
     <!-- Liste de nos evenements -->
     <h2>Mes évènements à venir</h2>
     <button class="popup-button">Créer un nouvel évènement</button>
+
     <?php
     // todo: get user id
+    // $_SESSION['currEvents'] = [];
     foreach ($dbh->query("SELECT * FROM Evenement") as $event) {
         echo "<p>{$event['nom']} {$event['lieu']} du {$event['datedebut']} " .
              "au {$event['datefin']}</p>";
+        // $_SESSION['currEvents']['event1'] = $event['idEvenement'];
     }
     ?>
+
+    <!-- let event = querySelector("#event1");
+    event.onlick = function () { ... }
+    while (event.nextSibling) {
+        event = event.nextSibling;
+        event.onclick = function () { ... }
+    } -->
 
     <div class="popup">
         <div class="popup-content">
