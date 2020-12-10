@@ -1,0 +1,111 @@
+@import 'global.css';
+
+.round-section {
+    border: 2px solid var(--hyper-blue);
+    border-radius: 5px;
+    margin: 0px 5px;
+}
+
+.round-header {
+    background: var(--hyper-blue);
+}
+
+.round-header h2 {
+    color: var(--hyper-orange);
+    padding: 10px 20px;
+    margin: 0px;
+}
+
+.round {
+    /* border-top: 2px solid var(--hyper-blue); */
+    /* background-color: aquamarine; */
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.group-stage {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--hyper-blue);
+    border-radius: 5px;
+    height: 200px;
+    width: 200px;
+    margin-right: 30px;
+    margin-bottom: 20px;
+}
+
+.group-icons {
+    align-self: flex-end;
+}
+
+.group-icons img {
+    cursor: pointer;
+    position: relative;
+    top: -12px;
+    right: -12px;
+    width: 30px;
+}
+
+.add-group-stage {
+    box-sizing: content-box;
+    height: 200px;
+    width: 200px;
+    padding: 0;
+    margin-right: 30px;
+    margin-bottom: 20px;
+    font-size: 3em;
+    color: var(--hyper-blue);
+    background: #fafafa;
+    border: 2px dotted var(--hyper-blue);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.add-group-stage:hover {
+    filter: brightness(85%);
+}
+
+.add-group-stage:active {
+    filter: brightness(75%);
+    border: 2px solid var(--hyper-blue);
+}
+
+.add-group-stage:focus {
+    outline: none;
+}
+
+.draggable-group {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    z-index: 10;
+    width: 250px;
+    height: 300px;
+    border: 2px solid var(--hyper-blue);
+    border-radius: 7px;
+    box-shadow: 0 0 7px #969696;
+    background-color: white;
+    cursor: grab;
+    padding: 10px;
+    /* text-align: center; */
+    /* min-height: 150px;
+    min-width: 150px; */
+}
+
+/* .draggable-group-header {
+    padding: 10px;
+    cursor: grab;
+    background-color: #293c4f;
+    color: #eb8e00;
+    border-radius: 5px 5px 0px 0px;
+} */
+
+.draggable-group:active {
+    cursor: grabbing;
+}
+
+.dragged {
+    background: var(--hyper-orange);
+    border-color: var(--hyper-dark-orange);
+}

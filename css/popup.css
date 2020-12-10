@@ -64,7 +64,7 @@
 
 .close-icon:hover,
 .close-icon:focus {
-    content: url("images/close-icon-hover.svg");
+    content: url("../images/close-icon-hover.svg");
     cursor: pointer;
 }
 

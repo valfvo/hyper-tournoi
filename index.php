@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hyper Tournoi</title>
     <link href="images/favicon.ico" rel="icon">
-    <link href="header.css" rel="stylesheet">
+    <link href="css/header.css" rel="stylesheet">
     
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Quicksand&display=swap" rel="stylesheet">

@@ -8,13 +8,13 @@
     <link href="images/favicon.ico" rel="icon">
     <link rel="preload" href="images/close-icon-hover.svg" as="image">
 
-    <link href="header.css" rel="stylesheet">
-    <link href="popup.css" rel="stylesheet">
+    <link href="css/header.css" rel="stylesheet">
+    <link href="css/popup.css" rel="stylesheet">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Quicksand&display=swap" rel="stylesheet">
 
-    <script src="popup.js" defer></script>
+    <script src="js/popup.js" defer></script>
 </head>
 
 <body>
