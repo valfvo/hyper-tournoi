@@ -15,6 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Quicksand&display=swap" rel="stylesheet">
 
     <script src="js/popup.js" defer></script>
+    <script src="js/link.js" defer></script>
 </head>
 
 <body>
@@ -31,8 +32,8 @@
     // todo: get user id
     // $_SESSION['currEvents'] = [];
     foreach ($dbh->query("SELECT * FROM Evenement") as $event) {
-        echo "<p>{$event['nom']} {$event['lieu']} du {$event['datedebut']} " .
-             "au {$event['datefin']}</p>";
+        echo "<p class=\"events\" id=\"{$event['idevenement']}\">{$event['nom']}".
+         "{$event['lieu']} du {$event['datedebut']} au {$event['datefin']}</p>";
         // $_SESSION['currEvents']['event1'] = $event['idEvenement'];
     }
     ?>

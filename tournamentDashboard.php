@@ -17,75 +17,45 @@ function getOptimalGroupDistribution($a, $b, $c) {
     }
 }
 
-function getTeamDistribution($count) { // Liste des distributions
-    $a = ceil(sqrt($count));
-    $b = floor($count / ceil(sqrt($count)));
-    $c = $count - $a * $b;
+function getTeamDistributions($count) { // Liste des distributions
     // if ($c == 1) {
         // return "$a x $b + $c";
     // }
-    [$a, $b, $c] = getOptimalGroupDistribution($a, $b, $c);
+    // [$a, $b, $c] = getOptimalGroupDistribution($a, $b, $c);
 
-    $nbPoule1 = $a - $b + $c + 1;
-    $nbPoule2 = $b - $c;
-    $typePoule1 = $nbPoule1 . "x" . $b;
-    $typePoule2 = $nbPoule2 . "x" . ($b - 1);
+    // $nbPoule1 = $a - $b + $c + 1;
+    // $nbPoule2 = $b - $c;
+    // $typePoule1 = $nbPoule1 . "x" . $b;
+    // $typePoule2 = $nbPoule2 . "x" . ($b - 1);
+    $distributions = array();
 
-    if ($nbPoule1 >= $nbPoule2) {
-        return $typePoule1 . " + " . $typePoule1;
-    } else {
-        return $typePoule2 . " + " . $typePoule1;
+    $maxI = (int) sqrt($count);
+    for ($i = 2; $i <= $maxI; ++$i) {
+        if ($count % $i == 0) {
+            $distributions[] = "{$i}x". ($count / $i);
+        }
     }
-    /**
-     * 7 equipes:
-     * 1x7 X
-     * 7x1 V 
-     * 
-     * 24 equipes
-     * 2x12
-     * 3x8
-     * 4x6
-     * 6x4
-     * 8x3
-     * 12x2
-     * 24x1
-     * 
-     * 17 * 15 + 4
-     * a * b + c
-     * 
-     * (a - b + c + 1) x b
-     * (b - c) x (b - 1)
-     * 
-     * a < 2 * (b - c) => b < 2 * (a - c)
-     * 
-     * 
-     * 
-     * 
-     * if (getMin(a, b, c) < getMin(b, a, c)) {
-     *   return a * b + c;
-     * } else {
-     *   return b * a + c;
-     * }
-     * 
-     * sqrt(259) = 16.1
-     * floor(259/17) = 15
-     * 17*15 (= 255) + 4 (~ 11)
-     * 
-     * 16*15 (= 250) + 19 (~ 4)
-     * 
-     * 13*16 + 3*17
-     * 
-     * sqrt(24) = 4.9
-     * 4,9 => 4x5
-     * floor(24/ceil(sqrt(24)))
-     * (int(sqrt($count)) x ceil(sqrt($count)) + reste
-     * 5x4 + 4
-     * 7x3 + 3
-     * 9x2 + 6
-     * 10
-     * 
-     * 4x5 + 4x1
-     */
+
+    $a = ceil(sqrt($count));
+    $b = floor($count / $a);
+    $c = $count - $a * $b;
+
+    $typePoule1 = $a - $c . "x" . $b;
+    $typePoule2 = $c . "x" . ($b + 1);
+    if ($a - $c >= $c) {
+        $distributions[] = $typePoule1 . " + " . $typePoule2;
+    } else {
+        $distributions[] = $typePoule2 . " + " . $typePoule1;
+    }
+    $typePoule1 = $b - $c . "x" . $a;
+    $typePoule2 = $c . "x" . ($a + 1);
+    if ($b - $c >= $c) {
+        $distributions[] = $typePoule1 . " + " . $typePoule2;
+    } else {
+        $distributions[] = $typePoule2 . " + " . $typePoule1;
+    }
+
+    return $distributions;
 }
 
 ?>
@@ -96,7 +66,6 @@ function getTeamDistribution($count) { // Liste des distributions
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hyper Tournoi</title>
     <link href="images/favicon.ico" rel="icon">
-    <link rel="preload" href="images/close-icon-hover.svg" as="image">
 
     <link href="css/header.css" rel="stylesheet">
     <link href="css/popup.css" rel="stylesheet">
@@ -105,7 +74,7 @@ function getTeamDistribution($count) { // Liste des distributions
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Quicksand&display=swap" rel="stylesheet">
 
-    <script src="js/popup.js" defer></script>
+    <!-- <script src="js/popup.js" defer></script> -->
     <script src="js/tournament.js" defer></script>
 </head>
 
@@ -114,23 +83,23 @@ function getTeamDistribution($count) { // Liste des distributions
     include("header.html");
     include("DBConnection.php");
 
-    $_SESSION['currEventID'] = 1;
-    $_SESSION['currTournamentID'] = 1;
+    if(isset($_POST["sessionTournament"])) {
+        $_SESSION['currTournamentID'] = $_POST["sessionTournament"];
+    }
     $eventID = $_SESSION['currEventID'];
     $tournamentID = $_SESSION['currTournamentID'];
     $eventName = $dbh->query("SELECT nom FROM Evenement WHERE idEvenement = $eventID")->fetch()['nom'];
     $tournamentName = $dbh->query("SELECT nom FROM Tournoi WHERE idTournoi = $tournamentID")->fetch()['nom'];
 
-    echo '<div><a href="eventDashboard.php"><- $eventName</a></div><br>';
-    echo "<h2>$tournamentName</h2>";
-    echo "optimal : " . getTeamDistribution(7);
+    echo "<div><a href=\"eventDashboard.php\"><- $eventName</a></div><br>";
+    echo "<h2>{$tournamentName}</h2>";
     ?>
 
     <div class="round-section">
-        <div class="round-header">
+        <div class="container-header">
             <h2>Tour 1</h2>
         </div>
-        <div>
+        <div class="round-info">
             <?php
             $teamCount = $dbh->query(
                 "SELECT COUNT(*) AS nbequipes FROM Equipe E, Inscription I
@@ -138,18 +107,19 @@ function getTeamDistribution($count) { // Liste des distributions
             )->fetch()['nbequipes'];
             echo "<p>Nombre d'équipes : $teamCount</p>";
             ?>
-            <form action="" method="get" class="form-organize">
-                <label for="distribution">Distribution des équipes :</label>
-                <select name="distribution" id="distribution">
-                    <option value="">choisir</option>
-                    <?php
-                    
-                    ?>
-                </select>
-            </form>
+            <label for="team-distribution">Répartition des équipes :</label>
+            <select name="distribution" id="team-distribution">
+                <option value="none" class="placeholder">choisir</option>
+                <?php
+                $distributions = getTeamDistributions($teamCount);
+                foreach ($distributions as $distribution) {
+                    echo "<option value=\"$distribution\">$distribution</option>";
+                }
+                ?>
+            </select>
+            <!-- Bouton choisir taille poule -->
         </div>
-        <div class="round">
-            <div class="group-stage"></div>
+        <div class="round" id="round1">
             <button class="add-group-stage">&plus;</button>
         </div>
     </div>

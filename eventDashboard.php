@@ -15,6 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Quicksand&display=swap" rel="stylesheet">
 
     <script src="js/popup.js" defer></script>
+    <script src="js/link.js" defer></script>
 </head>
 
 <body>
@@ -27,13 +28,16 @@
     <button class="popup-button">Créer un nouveau tournoi</button>
 
     <?php
-    $_SESSION['currEventID'] = 12;
+    if(isset($_POST["sessionEvent"])) {
+        $_SESSION['currEventID'] = $_POST["sessionEvent"];
+    }
     $eventID = $_SESSION['currEventID'];
     $eventName = $dbh->query("SELECT nom FROM Evenement WHERE idEvenement = $eventID")->fetch()['nom'];
     echo "<h2>{$eventName}</h2>";
 
     foreach ($dbh->query("SELECT * FROM Tournoi WHERE idEvenement = $eventID") as $tournament) {
-        echo "<p>{$tournament['nom']} {$tournament['sport']} {$tournament['typejeu']}";
+        echo "<p class=\"tournaments\" id=\"{$tournament['idtournoi']}\">".
+        "{$tournament['nom']} {$tournament['sport']} {$tournament['typejeu']}</p>";
     }
     ?>
 

@@ -6,11 +6,25 @@
     margin: 0px 5px;
 }
 
-.round-header {
+.round-info {
+    padding-left: 20px;
+}
+
+.container-header {
     background: var(--hyper-blue);
 }
 
-.round-header h2 {
+/* .group-stage .container-header {
+    position: relative;
+    top: -30px;
+} */
+
+/* .group-stage .container-header h2 {
+    font-size: 1em;
+} */
+
+.container-header h2,
+.container-header h3 {
     color: var(--hyper-orange);
     padding: 10px 20px;
     margin: 0px;
@@ -29,28 +43,37 @@
     flex-direction: column;
     border: 2px solid var(--hyper-blue);
     border-radius: 5px;
-    height: 200px;
     width: 200px;
+    /* height: 200px; */
     margin-right: 30px;
     margin-bottom: 20px;
 }
 
+.group-stage > :not(:first-child) {
+    position: relative;
+    top: -30px;
+    text-align: center;
+}
+
 .group-icons {
     align-self: flex-end;
+    max-height: 30px;
+    position: relative;
+    top: -12px;
+    right: -12px;
+    z-index: 1;
 }
 
 .group-icons img {
     cursor: pointer;
-    position: relative;
-    top: -12px;
-    right: -12px;
     width: 30px;
 }
 
 .add-group-stage {
+    display: none;
     box-sizing: content-box;
-    height: 200px;
     width: 200px;
+    height: 200px;
     padding: 0;
     margin-right: 30px;
     margin-bottom: 20px;
@@ -108,4 +131,14 @@
 .dragged {
     background: var(--hyper-orange);
     border-color: var(--hyper-dark-orange);
+}
+
+.placeholder {
+    display: none;
+}
+
+.draggable-item {
+    border: 1px solid var(--hyper-blue);
+    border-radius: 3px;
+    margin: 2px;
 }

@@ -7,3 +7,8 @@
 body {
     font-family: 'Montserrat', sans-serif;
 }
+
+.events,
+.tournaments {
+    cursor: pointer;
+}
