@@ -10,4 +10,9 @@ try {
 } catch(PDOException $e) {
     echo $e->getMessage();
 }
+
+// echo $dbh->errorInfo()[0];
+// echo $dbh->errorInfo()[1];
+// echo $dbh->errorInfo()[2];
+
 ?>

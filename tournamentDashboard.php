@@ -76,6 +76,7 @@ function getTeamDistributions($count) { // Liste des distributions
 
     <!-- <script src="js/popup.js" defer></script> -->
     <script src="js/tournament.js" defer></script>
+    <script src="js/saveModifications.js" defer></script>
 </head>
 
 <body>
@@ -94,34 +95,6 @@ function getTeamDistributions($count) { // Liste des distributions
     echo "<div><a href=\"eventDashboard.php\"><- $eventName</a></div><br>";
     echo "<h2>{$tournamentName}</h2>";
     ?>
-
-    <div class="round-section">
-        <div class="container-header">
-            <h2>Tour 1</h2>
-        </div>
-        <div class="round-info">
-            <?php
-            $teamCount = $dbh->query(
-                "SELECT COUNT(*) AS nbequipes FROM Equipe E, Inscription I
-                WHERE E.idEquipe = I.idEquipe AND idTournoi = $tournamentID"
-            )->fetch()['nbequipes'];
-            echo "<p>Nombre d'équipes : $teamCount</p>";
-            ?>
-            <label for="team-distribution">Répartition des équipes :</label>
-            <select name="distribution" id="team-distribution">
-                <option value="none" class="placeholder">choisir</option>
-                <?php
-                $distributions = getTeamDistributions($teamCount);
-                foreach ($distributions as $distribution) {
-                    echo "<option value=\"$distribution\">$distribution</option>";
-                }
-                ?>
-            </select>
-            <!-- Bouton choisir taille poule -->
-        </div>
-        <div class="round" id="round1">
-            <button class="add-group-stage">&plus;</button>
-        </div>
-    </div>
+    <button id="save-button">Enregistrer les modifications</button>
 </body>
 </html>

@@ -105,9 +105,11 @@ CREATE TABLE Compose (
     CONSTRAINT PK_Compose
         PRIMARY KEY(idPoule, idEquipe),
     CONSTRAINT FK_Poule
-        FOREIGN KEY(idPoule) REFERENCES Poule(idPoule),
+        FOREIGN KEY(idPoule) REFERENCES Poule(idPoule)
+        ON DELETE CASCADE,
     CONSTRAINT FK_Equipe
         FOREIGN KEY(idEquipe) REFERENCES Equipe(idEquipe)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE Match (

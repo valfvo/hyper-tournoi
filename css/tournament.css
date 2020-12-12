@@ -141,4 +141,9 @@
     border: 1px solid var(--hyper-blue);
     border-radius: 3px;
     margin: 2px;
+    cursor: grab;
+}
+
+.draggable-item:active {
+    cursor: grabbing;
 }
