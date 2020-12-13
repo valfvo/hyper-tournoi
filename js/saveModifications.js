@@ -23,16 +23,18 @@ function saveModifications() {
             let nTeam = parseInt(group.dataset.size);
             for (let j = 0; j < nTeam-1; ++j) {
                 let team = group.children[j+2];  // +2: icons and header
-                query += `${team.id.slice(4)},`;  // id is like team#
+                query += `${team.id.slice(5)},`;  // id is like team-#
             }
 
             let lastTeam = group.lastElementChild;
-            query += `${lastTeam.id.slice(4)}&${currSet}-round=${iRound+1}&`;
+            query += `${lastTeam.id.slice(5)}&${currSet}-round=${iRound+1}&`;
         }
     }
 
     query = query.slice(0, -1);
     const uri = 'tournamentData.php?' + query;
+
+    console.log(uri);
 
     xmlRequest = new XMLHttpRequest();
     xmlRequest.open('GET', encodeURI(uri.replaceAll(' + ', ' ')));
@@ -41,10 +43,6 @@ function saveModifications() {
 
 const saveButton = document.querySelector('#save-button');
 saveButton.onclick = saveModifications;
-
-
-
-
 
 /**
  *  tour 1:

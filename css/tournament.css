@@ -1,5 +1,11 @@
 @import 'global.css';
 
+#save-button {
+    position: absolute;
+    right: 2%;
+    top: 20%;
+}
+
 .round-section {
     border: 2px solid var(--hyper-blue);
     border-radius: 5px;
@@ -146,4 +152,29 @@
 
 .draggable-item:active {
     cursor: grabbing;
+}
+
+.match span {
+    margin: 2%;
+}
+
+.match input {
+    width: 15%;
+    margin: 2%;
+}
+
+.match select {
+    margin: 5% 2%;
+}
+
+.match select:enabled {
+    width: 30%;
+}
+
+select:disabled {
+    opacity: 1;
+}
+
+select {
+    text-align-last: center;
 }

@@ -218,7 +218,7 @@ function distributeTeams(teams, round) {
         if (group.childElementCount < size + 2) {
             let team = document.createElement('div');
             team.classList.add('draggable-item');
-            team.id = "team" + teams.children[iTeam].getAttribute('id');
+            team.id = 'team-' + teams.children[iTeam].getAttribute('id');
 
             team.innerText = 
                 teams.children[iTeam].getAttribute('name') + " niveau : "
@@ -394,8 +394,12 @@ function createRoundHeader(round) {
     const header = document.createElement('div');
     header.classList.add('container-header');
     header.innerHTML = `<h2>Tour ${round.number}</h2>`;
-    const startRound = document.createElement('button');
-    
+    const startRoundButton = document.createElement('button');
+    // startRoundButton.id = `start-round${round.number}`;
+    startRoundButton.dataset.roundId = round.id;
+    startRoundButton.textContent = 'Commencer le tour';
+    header.appendChild(startRoundButton);
+    startRoundButton.onclick = startRound;
 
     return header;
 }
@@ -451,6 +455,7 @@ function createRoundList(round) {
 
 function createRound(round) {
     const roundSection = document.createElement('div');
+    roundSection.id = 'round-section-' + round.id;
     roundSection.classList.add('round-section');
 
     roundSection.appendChild(createRoundHeader(round));

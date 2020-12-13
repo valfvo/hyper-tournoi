@@ -179,5 +179,4 @@ while (isset($_GET[$currSet])) {
 
     $currSet = 'set' . (substr($currSet, -1) + 1);
 }
-
 ?>
