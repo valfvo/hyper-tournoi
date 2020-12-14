@@ -20,12 +20,12 @@
     background: var(--hyper-blue);
 }
 
-/* .group-stage .container-header {
+/* .group .container-header {
     position: relative;
     top: -30px;
 } */
 
-/* .group-stage .container-header h2 {
+/* .group .container-header h2 {
     font-size: 1em;
 } */
 
@@ -36,7 +36,7 @@
     margin: 0px;
 }
 
-.round {
+.groups {
     /* border-top: 2px solid var(--hyper-blue); */
     /* background-color: aquamarine; */
     padding: 20px;
@@ -44,7 +44,7 @@
     flex-wrap: wrap;
 }
 
-.group-stage {
+.group {
     display: flex;
     flex-direction: column;
     border: 2px solid var(--hyper-blue);
@@ -53,13 +53,13 @@
     /* height: 200px; */
     margin-right: 30px;
     margin-bottom: 20px;
-}
-
-.group-stage > :not(:first-child) {
-    position: relative;
-    top: -30px;
     text-align: center;
 }
+
+/* .group > :not(:first-child) {
+    position: relative;
+    top: -30px;
+} */
 
 .group-icons {
     align-self: flex-end;
@@ -75,7 +75,7 @@
     width: 30px;
 }
 
-.add-group-stage {
+.add-group {
     display: none;
     box-sizing: content-box;
     width: 200px;
@@ -91,16 +91,16 @@
     cursor: pointer;
 }
 
-.add-group-stage:hover {
+.add-group:hover {
     filter: brightness(85%);
 }
 
-.add-group-stage:active {
+.add-group:active {
     filter: brightness(75%);
     border: 2px solid var(--hyper-blue);
 }
 
-.add-group-stage:focus {
+.add-group:focus {
     outline: none;
 }
 
