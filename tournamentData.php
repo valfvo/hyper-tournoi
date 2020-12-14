@@ -52,8 +52,8 @@ class DatabaseModel {
         echo "</rounds>";
     }
 
-    public static function getGroups($numRound) {
-        $sqlGetGroups = "SELECT * FROM Poule WHERE idTour = $numRound";
+    public static function getGroups($roundNumber) {
+        $sqlGetGroups = "SELECT * FROM Poule WHERE idTour = $roundNumber";
         echo "<groups>";
 
         foreach (self::$dbh->query($sqlGetGroups) as $group) {

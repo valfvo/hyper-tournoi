@@ -62,37 +62,6 @@ function closeDragElement() {
     document.onmousemove = null;
 }
 
-// function allowDrop(event) {
-//     if (event.target.classList.contains("group")) {
-//         event.preventDefault();
-//     }
-// }
-
-// function dragTeam(event) {
-//         event.dataTransfer.setData('text', event.target.id);
-// }
-
-// function updateGroupSize(group, increment) {
-//     const header = group.querySelector('h3');
-//     group.dataset.size = parseInt(group.dataset.size, 10) + increment;
-
-//     header.innerHTML = 
-//         header.innerHTML.replace(/<br>(\d+)/, '<br>' + group.dataset.size);
-// }
-
-// function dropGroup(event) {
-//     if (event.target.classList.contains("group")) {
-//         event.preventDefault();
-//         const idDragged = event.dataTransfer.getData('text');
-//         const dragged = document.querySelector(`#${idDragged}`);
-
-//         updateGroupSize(dragged.parentNode, -1);
-
-//         event.target.appendChild(document.querySelector(`#${idDragged}`));
-//         updateGroupSize(event.target, 1);
-//     }
-// }
-
 function addUtilityButtons(element) {
     const buttons = document.createElement('div');
     buttons.classList.add('group-icons');
@@ -155,7 +124,6 @@ function createPopup() {
     draggableMap[draggableGroup.id] = group;
     ++draggableID;
 }
-
 
 function fetchTournamentData() {
     xmlRequest = new XMLHttpRequest();

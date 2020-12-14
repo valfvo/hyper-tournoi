@@ -1,33 +1,27 @@
 function saveModifications() {
     let query = '';
     let setCount = 0;
-    const rounds = document.querySelectorAll('.round');
 
-    for (const [iRound, round] of rounds.entries()) {
+    for (const round of Object.values(roundMap)) {
+        console.log("round = ", round);
         let currSet = `set${setCount++}`;
-        const distribution =
-            document.querySelector(`#team-distribution-${iRound}`).value;
-        query += `${currSet}=round&${currSet}-number=${iRound+1}`
-               + `&${currSet}-composition=${distribution}&`;
+        query += `${currSet}=round&${currSet}-number=${round.number}`
+               + `&${currSet}-composition=${round.distribution}&`;
 
-        let nGroup = round.childElementCount - 1;
-        for (let i = 0; i < nGroup; ++i) {
-            let group = round.children[i];
-            if (group.childElementCount === 2) {  // only icons and header
+        for (const group of round.groups) {
+            if (group.teams.length === 0) {  // only icons and header
                 continue;
             }
 
             currSet = `set${setCount++}`;
-            query += `${currSet}=group&${currSet}-number=${i+1}&${currSet}-teams=`;
+            query += `${currSet}=group&${currSet}-number=${group.number}&${currSet}-teams=`;
 
-            let nTeam = parseInt(group.dataset.size);
-            for (let j = 0; j < nTeam-1; ++j) {
-                let team = group.children[j+2];  // +2: icons and header
-                query += `${team.id.slice(5)},`;  // id is like team-#
+            for (const team of group.teams) {
+                query += `${team.id},`;  // id is like team-#
             }
-
-            let lastTeam = group.lastElementChild;
-            query += `${lastTeam.id.slice(5)}&${currSet}-round=${iRound+1}&`;
+            query = query.slice(0, -1);
+            
+            query += `&${currSet}-round=${round.number}&`;
         }
     }
 
@@ -63,4 +57,8 @@ saveButton.onclick = saveModifications;
  *             set2=group&num2=2&teams2=4,5,6,7&round2=2
  *             ...
  *             set11=group&num11=1&teams11=1,2,3&round11=1
+ * 
+ * tournamentData.php?set0=round&set0-number=1&set0-composition=1x3 + 1x4&
+ *                    set1=group&set1-number=1&set1-teams=7,4,6,1,3,5&set1-round=1&
+ *                    set2=group&set2-number=2&set2-teams=2&set2-round=1
  */
