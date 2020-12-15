@@ -42,14 +42,15 @@ class Team {
     }
 
     static getTeamDistributions(teamCount) {
-        // 3: 1x1 + 1x2, 0x2 + 1x3
-        // 4: 2x2 + 0x3
-        let distributions = [];
+        if (teamCount <= 1) return [];
+        let distributions = ['1x' + teamCount];
 
         const maxI = Math.floor(Math.sqrt(teamCount));
-        for (let i = 1; i <= maxI; ++i) {
+        for (let i = 2; i <= maxI; ++i) {
             if (teamCount % i === 0) {
-                distributions.push(i + 'x' + (teamCount / i));
+                const rest = teamCount / i;
+                distributions.push(i + 'x' + rest);
+                if (rest != i) distributions.push(rest + 'x' + i);
             }
         }
 
@@ -60,29 +61,49 @@ class Team {
         const b = Math.floor(teamCount / a);
         const c = teamCount - a * b;
 
-        let firstDistribution = (a - c) + 'x' + b; 
-        let secondDistribution = c + 'x' + (b + 1);
-        
-        if (a - c > 0 && c > 0 && b > 1) {
-            if (a - c >= c) {
-                distributions.push(firstDistribution + ' + ' + secondDistribution);
-            } else {
-                distributions.push(secondDistribution + ' + ' + firstDistribution);
+        if (c !== 0) {
+            const first = Team.getAlmostUniformDistribution(a, b, c);
+            if (first) {
+                distributions.push(first);
+            }
+
+            const second = Team.getAlmostUniformDistribution(b, a, c);
+            if (second && second != first) {
+                distributions.push(second);
             }
         }
 
-        firstDistribution = (b - c) + 'x' + a;
-        secondDistribution = c + 'x' + (a + 1);
-
-        if (b - c > 0 && c > 0 && a > 1) {
-            if (b - c >= c) {
-                distributions.push(firstDistribution + ' + ' + secondDistribution);
-            } else {
-                distributions.push(secondDistribution + ' + ' + firstDistribution);
+        if (teamCount % 2 == 1  && teamCount > 3) {
+            const evenTeamCount = Math.floor(teamCount / 2) - 1;
+            const even = evenTeamCount + 'x2';
+            const odd = '1x3';
+            if (
+                !(distributions.includes(even + ' + ' + odd)
+                || distributions.includes(odd + ' + ' + even))
+            ) {
+                distributions.push(even + ' + ' + odd);
             }
         }
-
         return distributions;
+    }
+
+    static getAlmostUniformDistribution(a, b, c) {
+        if (b > 1 && c > 1 && Math.abs(b - c) === 1) {
+            return a + 'x' + b + ' + 1x' + c;
+        } else {
+            const first = (a - c) + 'x' + b; 
+            const second = c + 'x' + (b + 1);
+
+            if (a - c > 0 && c > 0 && b > 1) {
+                if (a - c >= c) {
+                    return first + ' + ' + second;
+                } else {
+                    return second + ' + ' + first;
+                }
+            }
+
+            return '';
+        }
     }
 
     static compare(teamA, teamB) {

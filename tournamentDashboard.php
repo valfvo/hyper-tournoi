@@ -15,7 +15,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Quicksand&display=swap" rel="stylesheet">
 
     <!-- <script src="js/popup.js" defer></script> -->
-    <script src="js/startRound.js" defer></script>
     <script src="js/team.js" defer></script>
     <script src="js/match.js" defer></script>
     <script src="js/group.js" defer></script>
@@ -41,5 +40,6 @@
     echo "<h2>{$tournamentName}</h2>";
     ?>
     <button id="save-button">Enregistrer les modifications</button>
+    <footer class="tournament-footer"></footer>
 </body>
 </html>

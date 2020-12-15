@@ -174,12 +174,33 @@ class Group {
     makeMatchScore() {
         const score = document.createElement('input');
         score.classList.add('match-score');
-        // score.name = 'score1';
         score.type = 'number';
         score.min = 0;
         score.value = 0;
 
         return score;
+    }
+
+    makeLeaderboard() {
+        const leaderboard = document.createElement('div');
+        leaderboard.classList.add('match-leaderboard');
+
+        const header = document.createElement('span');
+        header.classList.add('match-leaderboard-header', 'leaderboard-header');
+        header.textContent = 'Classement';
+
+        const ol = document.createElement('ol');
+        ol.classList.add('leaderboard-ol');
+        for (const team of this.leaderboard) {
+            const li = document.createElement('li');
+            li.textContent = team.name;
+            ol.appendChild(li);
+        }
+
+        leaderboard.appendChild(header);
+        leaderboard.appendChild(ol);
+
+        return leaderboard;
     }
 
     addTeam(team) {
@@ -191,6 +212,10 @@ class Group {
         dropZone.appendChild(draggable);
 
         this.teams.push(team);
+        if (this.round != null) {
+            this.round.updateMaxWinnersPerGroup();
+        }
+
         return true;
     }
 
@@ -199,6 +224,9 @@ class Group {
         const index = this.teams.findIndex(e => e.id === teamId);
         if (index > -1) {
             this.teams.splice(index, 1);
+            if (this.round != null) {
+                this.round.updateMaxWinnersPerGroup();
+            }
             teamDom.remove();
         }
     }
@@ -328,24 +356,26 @@ class Group {
     }
 
     onAllMatchesEnded() {
+        this.leaderboard = [...this.teams].sort(Team.compare).reverse();
+
         this.dom.querySelector('.match').remove();
 
         const matchEnded = document.createElement('div');
         matchEnded.classList.add('match-ended');
 
         const matchEndedMessage = document.createElement('span');
+        matchEndedMessage.classList.add('match-ended-span');
         matchEndedMessage.textContent = 'Tout les matchs ont été joués';
 
         matchEnded.appendChild(matchEndedMessage);
+        matchEnded.appendChild(this.makeLeaderboard());
         this.dom.appendChild(matchEnded);
-
-        this.leaderboard = [...this.teams].sort(Team.compare).reverse();
 
         if (typeof this.onAllMatchesEndedCallback === 'function') {
             this.onAllMatchesEndedCallback();
         }
     }
-
+    
     updateMaxSize(increment) {
         if (increment < 0 && this.maxSize + increment < this.teams.length) {
             return;

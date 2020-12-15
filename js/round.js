@@ -19,10 +19,12 @@ class Round {
             }
         });
         this.teams.forEach(team => team.clearMatchHistory());
+        this.leaderboard = [];
 
         this.groups = [];
         this.dom = this.makeDom(xml);
         this.groups.forEach(group => group.round = this);
+        this.updateMaxWinnersPerGroup();
 
         roundMap[this.id] = this;
         ++roundCreatedCount;
@@ -67,6 +69,7 @@ class Round {
 
     makeDom(xml = null) {
         const section = document.createElement('div');
+        section.dataset.roundId = this.id;
         section.id = 'round-section-' + this.id;
         section.classList.add('round-section');
 
@@ -79,7 +82,7 @@ class Round {
 
     makeHeader() {
         const header = document.createElement('div');
-        header.classList.add('container-header');
+        header.classList.add('container-header', 'round-header');
         header.innerHTML = `<h2>Tour ${this.number}</h2>`;
 
         const startButton = document.createElement('button');
@@ -102,14 +105,14 @@ class Round {
         info.classList.add('round-info');
         info.innerHTML = `<p>Nombre d'équipes : ${this.teams.length}</p>`;
 
-        const label = document.createElement('label');
-        label.setAttribute('for', `team-distribution-${this.id}`);
-        label.textContent = 'Répartition des équipes : ';
+        const distributionLabel = document.createElement('label');
+        distributionLabel.setAttribute('for', `team-distribution-${this.id}`);
+        distributionLabel.textContent = 'Répartition des équipes : ';
 
-        const select = document.createElement('select');
-        select.dataset.roundId = this.id;
-        select.id = `team-distribution-${this.id}`;
-        select.innerHTML =
+        const distributionSelect = document.createElement('select');
+        distributionSelect.dataset.roundId = this.id;
+        distributionSelect.id = `team-distribution-${this.id}`;
+        distributionSelect.innerHTML =
             '<option value="none" class="placeholder">choisir</option>';
 
         const distributions = Team.getTeamDistributions(this.teams.length);
@@ -119,12 +122,32 @@ class Round {
             option.textContent = distribution;
             option.selected = distribution === this.distribution;
 
-            select.add(option);
+            distributionSelect.add(option);
         }
-        select.onchange = onDistributionChange;
+        distributionSelect.onchange = onDistributionChange;
 
-        info.appendChild(label);
-        info.appendChild(select);
+        const winnersLabel = document.createElement('label');
+        winnersLabel.setAttribute('for', `winners-input-${this.id}`);
+        winnersLabel.textContent = 'Vainqueurs par poule : ';
+
+        const winnersInput =  document.createElement('input');
+        winnersInput.dataset.roundId = this.id;
+        winnersInput.classList.add('small-input-number');
+        winnersInput.id = `winners-input-${this.id}`;
+        winnersInput.type = 'number';
+        winnersInput.min = 1;
+        winnersInput.value = 1;
+        winnersInput.onchange = onWinnersPerGroupChange;
+        winnersInput.onkeypress = () => { return false; };
+        if (this.distribution === 'none') {
+            winnersInput.disabled = true;
+        }
+
+        info.appendChild(distributionLabel);
+        info.appendChild(distributionSelect);
+        info.appendChild(document.createElement('br'));
+        info.appendChild(winnersLabel);
+        info.appendChild(winnersInput);
 
         return info;
     }
@@ -156,6 +179,9 @@ class Round {
             if (this.distribution === 'none') {
                 const startRoundButton = this.dom.querySelector('.start-round-button');
                 startRoundButton.style.display = 'inline-block';
+
+                const winnersInput = this.dom.querySelector(`#winners-input-${this.id}`);
+                winnersInput.disabled = false;
             }
 
             this.distribution = event.distribution;
@@ -183,47 +209,75 @@ class Round {
         }
     }
 
+    onWinnersPerGroupChange(event) {
+        this.winnersPerGroup = event.target.value;
+    }
+
     onRoundEnded() {
-        const organize = document.createElement('div');
-        organize.classList.add('organize-next-rounds');
-        organize.dataset.roundId = this.id;
+        let losersLeaderboard = [];
+        let winnersLeaderboard = [];
 
-        const organizeLosersRound = document.createElement('button');
-        organizeLosersRound.classList.add('next-round-button');
-        organizeLosersRound.classList.add('losers');
-        organizeLosersRound.textContent = 'Organiser le tour des perdants';
-        organizeLosersRound.onclick = onRoundOrganized;
+        this.groups.forEach(group => {
+            losersLeaderboard = losersLeaderboard.concat(
+                group.leaderboard.slice(this.winnersPerGroup)
+            );
+            winnersLeaderboard = winnersLeaderboard.concat(
+                group.leaderboard.slice(0, this.winnersPerGroup)
+            );
+        });
+        losersLeaderboard.sort(Team.compare);
+        winnersLeaderboard.sort(Team.compare);
+        this.leaderboard = losersLeaderboard.concat(winnersLeaderboard);
 
-        const organizeWinnersRound = document.createElement('button');
-        organizeWinnersRound.classList.add('next-round-button');
-        organizeWinnersRound.classList.add('winners');
-        organizeWinnersRound.textContent = 'Organiser le tour des gagnants';
-        organizeWinnersRound.onclick = onRoundOrganized;
-        /**
-         *  On récupère toutes les teams gagnantes dans un tableau
-         *  On a le nombre d'equipe du tour
-         *  On appelle Team.getTeamDistributions(teamCount)
-         *  new Round(...);
-         */
+        console.log(this.leaderboard);
 
-        organize.appendChild(organizeLosersRound);
-        organize.appendChild(organizeWinnersRound);
+        if (this.isLosersRound()) return;
 
-        this.dom.parentNode.insertBefore(organize, this.dom.nextSibling);
-        // todo nouveaux tours pour les gagnants et perdants
-        /**
-         * Tour 2 gagnants -> il reste des gagnants
-         * Tour 2 perdants -> il reste des perdants
-         */
+        const winnerCount = this.winnersPerGroup * this.groups.length;
+        const loserCount = this.teams.length - winnerCount;
+
+        let organize = null;
+        if (loserCount > 1 || winnerCount > 1) {
+            organize = document.createElement('div');
+            organize.classList.add('organize-next-rounds');
+            organize.dataset.roundId = this.id;
+        }
+
+        let organizeLosersRound = null;
+        if (loserCount > 1) {
+            organizeLosersRound = document.createElement('button');
+            organizeLosersRound.classList.add('next-round-button', 'losers');
+            organizeLosersRound.textContent = 'Organiser le tour des perdants';
+            organizeLosersRound.onclick = onRoundOrganized;
+
+            organize.appendChild(organizeLosersRound);
+        }
+
+        let organizeWinnersRound = null;
+        if (winnerCount > 1) {
+            organizeWinnersRound = document.createElement('button');
+            organizeWinnersRound.classList.add('next-round-button', 'winners');
+            organizeWinnersRound.textContent = 'Organiser le tour des gagnants';
+            organizeWinnersRound.onclick = onRoundOrganized;
+
+            organize.appendChild(organizeWinnersRound);
+        } else {
+            const endTournament = document.createElement('button');
+            endTournament.dataset.roundId = this.id;
+            endTournament.classList.add('end-tournament-button');
+            endTournament.textContent = 'Terminer le tournoi';
+            endTournament.onclick = onTournamentEnded;
+
+            this.dom.parentNode.insertBefore(endTournament, this.dom.nextSibling)
+        }
+
+        if (organize != null) {
+            this.dom.parentNode.insertBefore(organize, this.dom.nextSibling);
+        }
     }
 
     onRoundOrganized(event) {
         const organize = event.target.parentNode;
-        if (organize.childElementCount > 1) {
-            event.target.remove();
-        } else {
-            organize.remove();
-        }
 
         let teams = [];
         const isWinnersRound = event.target.classList.contains('winners');
@@ -237,14 +291,30 @@ class Round {
             }
         }
 
-        const round = new Round(this.number + 1, 'none', 1, teams);
+        if (teams.length > 1) {
+            const round = new Round(this.number + 1, 'none', 1, teams);
 
-        if (!isWinnersRound) {
-            const h2 = round.dom.querySelector('.container-header h2');
-            h2.textContent += ' des perdants';
+            // organize <afterOrganize> nextSibling
+            let afterOrganize = organize.nextSibling;
+            if (isWinnersRound) {
+                //  if loser round has already been created
+                if (organize.childElementCount < 2) {
+                    // organize loserRound <afterOrganize> nextSibling
+                    afterOrganize = afterOrganize.nextSibling;
+                }
+            } else {
+                const h2 = round.dom.querySelector('.container-header h2');
+                h2.textContent += ' des perdants';
+            }
+
+            organize.parentNode.insertBefore(round.dom, afterOrganize);
         }
 
-        this.dom.parentNode.appendChild(round.dom);
+        if (organize.childElementCount > 1) {
+            event.target.remove();
+        } else {
+            organize.remove();
+        }
     }
 
     addGroup(group) {
@@ -254,6 +324,24 @@ class Round {
 
         this.groups.push(group);
         group.round = this;
+    }
+
+    updateMaxWinnersPerGroup() {
+        if (this.groups.length === 0) return;
+
+        let minGroupSize = this.groups[0].teams.length;
+        for (const group of this.groups) {
+            if (group.teams.length < minGroupSize) {
+                minGroupSize = group.teams.length;
+            } 
+        }
+        const maxWinnersPerGroup = Math.max(minGroupSize - 1, 1);
+
+        const winnersInput = this.dom.querySelector(`#winners-input-${this.id}`);
+        winnersInput.max = maxWinnersPerGroup;
+        if (winnersInput.value > maxWinnersPerGroup) {
+            winnersInput.value = maxWinnersPerGroup;
+        }
     }
 
     distributeTeams() {
@@ -289,6 +377,9 @@ class Round {
         const select = this.dom.querySelector(`#team-distribution-${this.id}`);
         select.disabled = true;
 
+        const winnersInput = this.dom.querySelector(`#winners-input-${this.id}`);
+        winnersInput.disabled = true;
+
         let groupsOver = 0;
         this.groups.forEach(group => group.startMatches(() => {
             ++groupsOver;
@@ -296,6 +387,45 @@ class Round {
                 this.onRoundEnded();
             }
         }));
+    }
+
+    isLosersRound() {
+        const h2 = this.dom.querySelector('.container-header h2');
+        return h2.textContent.includes('perdants');
+    }
+
+    static getTournamentLeaderboard() {
+        let leaderboard = [];
+
+        const rounds = document.body.querySelectorAll('.round-section');
+        for (const [index, roundDom] of rounds.entries()) {
+            const round = roundMap[roundDom.dataset.roundId];
+    
+            if (!round.isLosersRound()) {
+                const nextRound = rounds[index + 1]
+                    ? roundMap[rounds[index + 1].dataset.roundId]
+                    : undefined;
+    
+                if (nextRound && nextRound.isLosersRound()) {
+                    leaderboard = leaderboard.concat(nextRound.leaderboard);
+                } else {
+                    const lastLoser = 
+                        round.teams.length - round.winnersPerGroup * round.groups.length;
+                    leaderboard = leaderboard.concat(round.leaderboard.slice(0, lastLoser));
+                    console.log(round.leaderboard.slice(0, lastLoser));
+                }
+            }
+        }
+
+        const lastRound = roundMap[rounds[rounds.length - 1].dataset.roundId];
+        const lastIsFinalRound = !lastRound.isLosersRound();
+        const finalRound = lastIsFinalRound
+            ? lastRound
+            : roundMap[rounds[rounds.length - 2].dataset.roundId];
+
+        leaderboard.push(finalRound.leaderboard[finalRound.leaderboard.length - 1]);
+
+        return leaderboard.reverse();
     }
 }
 
@@ -314,6 +444,11 @@ function onDistributionChange(event) {
     round.onDistributionChange(distributionChangeEvent);
 }
 
+function onWinnersPerGroupChange(event) {
+    const round = roundMap[event.target.dataset.roundId];
+    round.onWinnersPerGroupChange(event);
+}
+
 function onRoundStarted(event) {
     const round = roundMap[event.target.dataset.roundId];
     round.start(event);
@@ -323,3 +458,64 @@ function onRoundOrganized(event) {
     const round = roundMap[event.target.parentNode.dataset.roundId];
     round.onRoundOrganized(event);
 }
+
+function onTournamentEnded(event) {
+    const leaderboardDiv = document.createElement('div');
+    leaderboardDiv.classList.add('tournament-leaderboard');
+
+    const header = document.createElement('h2');
+    header.classList.add('tournament-leaderboard-header', 'leaderboard-header');
+    header.textContent = 'Classement';
+
+    const leaderboard = Round.getTournamentLeaderboard();
+
+    const ol = document.createElement('ol');
+    ol.classList.add('leaderboard-ol');
+    for (const team of leaderboard) {
+        const li = document.createElement('li');
+        li.textContent = team.name;
+        ol.appendChild(li);
+    }
+
+    leaderboardDiv.appendChild(header);
+    leaderboardDiv.appendChild(ol);
+
+    const firstRound = document.body.querySelector('#round-section-0');
+    document.body.insertBefore(leaderboardDiv, firstRound);
+
+    const organizeDivs = document.body.querySelectorAll('.organize-next-rounds');
+    for (const organizeDiv of organizeDivs) {
+        organizeDiv.remove();
+    }
+
+    event.target.remove();
+
+    window.scroll({
+        left: 0,
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+/**
+ * round1, round2perdant, round2, round3perdant
+ * 
+ * round2perdant, round1, round3perdant, round2
+ * 
+ * classement final = []
+ * Tour 1 [g, e, b, d] + [c, a, f] 
+ * -> tour2perdant existe
+ *     ? classement += tour2perdant
+ *     : classement += tour1[perdants]
+ * Tour 2 Perdants [f, a, c] //
+ * Tour 2 [g, e] + [b, d]
+ * -> tour3perdant existe
+ *     ? classement += tour3perdant
+ *     : classement += tour2[perdants] 
+ * Tour 3 Perdants [d, b] //
+ * Tour 3 [g] + [e] -> tour4perdant existe
+ *     ? classement += tour4perdant
+ *     : classement += tour3[perdants]
+ * ->
+ * classement += tour3[gagnants]
+ */

@@ -135,11 +135,15 @@ function fetchTournamentData() {
             const xml = this.responseXML;
             const roundsXML = xml.querySelector('rounds');
             const rounds = Round.makeRounds(roundsXML);
+            const footer = document.querySelector('.tournament-footer');
+
             for (const round of rounds) {
-                document.body.appendChild(round.dom);
+                document.body.insertBefore(round.dom, footer);
             }
             if (rounds.length === 0) {
-                Round.makeFirstRound(round => document.body.appendChild(round.dom));
+                Round.makeFirstRound(round => {
+                    document.body.insertBefore(round.dom, footer);
+                });
             }
         }
     };
