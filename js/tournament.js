@@ -134,8 +134,12 @@ function fetchTournamentData() {
         ) {
             const xml = this.responseXML;
             const roundsXML = xml.querySelector('rounds');
-            for (const round of Round.makeRounds(roundsXML)) {
+            const rounds = Round.makeRounds(roundsXML);
+            for (const round of rounds) {
                 document.body.appendChild(round.dom);
+            }
+            if (rounds.length === 0) {
+                Round.makeFirstRound(round => document.body.appendChild(round.dom));
             }
         }
     };

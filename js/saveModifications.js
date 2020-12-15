@@ -3,13 +3,12 @@ function saveModifications() {
     let setCount = 0;
 
     for (const round of Object.values(roundMap)) {
-        console.log("round = ", round);
         let currSet = `set${setCount++}`;
         query += `${currSet}=round&${currSet}-number=${round.number}`
                + `&${currSet}-composition=${round.distribution}&`;
 
         for (const group of round.groups) {
-            if (group.teams.length === 0) {  // only icons and header
+            if (group.teams.length === 0) {
                 continue;
             }
 
@@ -17,7 +16,7 @@ function saveModifications() {
             query += `${currSet}=group&${currSet}-number=${group.number}&${currSet}-teams=`;
 
             for (const team of group.teams) {
-                query += `${team.id},`;  // id is like team-#
+                query += `${team.id},`;
             }
             query = query.slice(0, -1);
             
@@ -28,7 +27,7 @@ function saveModifications() {
     query = query.slice(0, -1);
     const uri = 'tournamentData.php?' + query;
 
-    console.log(uri);
+    // console.log(uri);
 
     xmlRequest = new XMLHttpRequest();
     xmlRequest.open('GET', encodeURI(uri.replaceAll(' + ', ' ')));

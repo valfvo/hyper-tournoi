@@ -1,8 +1,9 @@
 let roundMap = new Map();
+let roundCreatedCount = 0;
 
 class Round {
-    constructor(id, number, distribution, winnersPerGroup, teams, xml = null) {
-        this.id = id;
+    constructor(number, distribution, winnersPerGroup, teams, xml = null) {
+        this.id = roundCreatedCount;
         this.number = number;
         this.distribution = distribution;
         this.winnersPerGroup = winnersPerGroup;
@@ -17,19 +18,42 @@ class Round {
                 return 0;
             }
         });
+        this.teams.forEach(team => team.clearMatchHistory());
 
-        this.groups = null;
+        this.groups = [];
         this.dom = this.makeDom(xml);
+        this.groups.forEach(group => group.round = this);
 
         roundMap[this.id] = this;
+        ++roundCreatedCount;
     }
 
+    static makeFirstRound(callback) {
+        xmlRequest = new XMLHttpRequest();
+        xmlRequest.onreadystatechange = function() {
+            if (
+                this.readyState === XMLHttpRequest.DONE
+                && this.status === 200
+            ) {
+                const xml = this.responseXML;
+                const teamsXML = xml.querySelector('teams');
+                const teams = Team.makeTeams(teamsXML);
+                const firstRound = new Round(1, 'none', 1, teams);
+
+                if (typeof callback === 'function') {
+                    callback(firstRound);
+                }
+            }
+        };
+        xmlRequest.open('GET', 'tournamentData.php?get=teams');
+        xmlRequest.send();
+    }
+    
     static makeRounds(xml) {
         let rounds = [];
         for (const roundXML of xml.children) {
             rounds.push(
                 new Round(
-                    document.querySelectorAll('.round-section').length,
                     parseInt(roundXML.getAttribute('number'), 10),
                     roundXML.getAttribute('distribution'),
                     parseInt(roundXML.getAttribute('winners-per-group'), 10),
@@ -58,12 +82,17 @@ class Round {
         header.classList.add('container-header');
         header.innerHTML = `<h2>Tour ${this.number}</h2>`;
 
-        const beginButton = document.createElement('button');
-        beginButton.dataset.roundId = this.id;
-        beginButton.textContent = 'Commencer le tour';
-        // beginButton.onclick = startRound;  // TODO
+        const startButton = document.createElement('button');
+        startButton.dataset.roundId = this.id;
+        startButton.classList.add('start-round-button');
+        startButton.textContent = 'Commencer le tour';
+        startButton.onclick = onRoundStarted;
 
-        header.appendChild(beginButton);
+        if (this.distribution === 'none') {
+            startButton.style.display = 'none';
+        }
+
+        header.appendChild(startButton);
 
         return header;
     }
@@ -75,7 +104,7 @@ class Round {
 
         const label = document.createElement('label');
         label.setAttribute('for', `team-distribution-${this.id}`);
-        label.textContent = 'Répartition des équipes :';
+        label.textContent = 'Répartition des équipes : ';
 
         const select = document.createElement('select');
         select.dataset.roundId = this.id;
@@ -124,6 +153,11 @@ class Round {
         const matches = re.exec(event.distribution);
 
         if (matches) {
+            if (this.distribution === 'none') {
+                const startRoundButton = this.dom.querySelector('.start-round-button');
+                startRoundButton.style.display = 'inline-block';
+            }
+
             this.distribution = event.distribution;
 
             let parsedMatches = matches.map(e => {
@@ -149,12 +183,77 @@ class Round {
         }
     }
 
+    onRoundEnded() {
+        const organize = document.createElement('div');
+        organize.classList.add('organize-next-rounds');
+        organize.dataset.roundId = this.id;
+
+        const organizeLosersRound = document.createElement('button');
+        organizeLosersRound.classList.add('next-round-button');
+        organizeLosersRound.classList.add('losers');
+        organizeLosersRound.textContent = 'Organiser le tour des perdants';
+        organizeLosersRound.onclick = onRoundOrganized;
+
+        const organizeWinnersRound = document.createElement('button');
+        organizeWinnersRound.classList.add('next-round-button');
+        organizeWinnersRound.classList.add('winners');
+        organizeWinnersRound.textContent = 'Organiser le tour des gagnants';
+        organizeWinnersRound.onclick = onRoundOrganized;
+        /**
+         *  On récupère toutes les teams gagnantes dans un tableau
+         *  On a le nombre d'equipe du tour
+         *  On appelle Team.getTeamDistributions(teamCount)
+         *  new Round(...);
+         */
+
+        organize.appendChild(organizeLosersRound);
+        organize.appendChild(organizeWinnersRound);
+
+        this.dom.parentNode.insertBefore(organize, this.dom.nextSibling);
+        // todo nouveaux tours pour les gagnants et perdants
+        /**
+         * Tour 2 gagnants -> il reste des gagnants
+         * Tour 2 perdants -> il reste des perdants
+         */
+    }
+
+    onRoundOrganized(event) {
+        const organize = event.target.parentNode;
+        if (organize.childElementCount > 1) {
+            event.target.remove();
+        } else {
+            organize.remove();
+        }
+
+        let teams = [];
+        const isWinnersRound = event.target.classList.contains('winners');
+        if (isWinnersRound) {
+            for (const group of this.groups) {  // get winner teams
+                teams = teams.concat(group.leaderboard.slice(0, this.winnersPerGroup));
+            }
+        } else {
+            for (const group of this.groups) {  // get loser teams
+                teams = teams.concat(group.leaderboard.slice(this.winnersPerGroup));
+            }
+        }
+
+        const round = new Round(this.number + 1, 'none', 1, teams);
+
+        if (!isWinnersRound) {
+            const h2 = round.dom.querySelector('.container-header h2');
+            h2.textContent += ' des perdants';
+        }
+
+        this.dom.parentNode.appendChild(round.dom);
+    }
+
     addGroup(group) {
         const groupsDiv = this.dom.querySelector(`#groups-${this.id}`);
         const addButton = groupsDiv.querySelector('.add-group');
         groupsDiv.insertBefore(group.dom, addButton);
 
         this.groups.push(group);
+        group.round = this;
     }
 
     distributeTeams() {
@@ -179,6 +278,25 @@ class Round {
             }
         }
     }
+
+    start(event) {
+        // const roundId = event.target.dataset.roundId;
+        event.target.remove();  // remove startButton
+
+        // const roundSection = document.querySelector(`round-section-${roundId}`);
+        const groups = this.dom.querySelector(`#groups-${this.id}`);
+
+        const select = this.dom.querySelector(`#team-distribution-${this.id}`);
+        select.disabled = true;
+
+        let groupsOver = 0;
+        this.groups.forEach(group => group.startMatches(() => {
+            ++groupsOver;
+            if (groupsOver === this.groups.length) {
+                this.onRoundEnded();
+            }
+        }));
+    }
 }
 
 class DistributionChangeEvent {
@@ -194,4 +312,14 @@ function onDistributionChange(event) {
         new DistributionChangeEvent(event.target, event.target.value);
 
     round.onDistributionChange(distributionChangeEvent);
+}
+
+function onRoundStarted(event) {
+    const round = roundMap[event.target.dataset.roundId];
+    round.start(event);
+}
+
+function onRoundOrganized(event) {
+    const round = roundMap[event.target.parentNode.dataset.roundId];
+    round.onRoundOrganized(event);
 }

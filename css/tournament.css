@@ -158,16 +158,16 @@
     margin: 2%;
 }
 
-.match input {
+.match .match-score {
     width: 15%;
     margin: 2%;
 }
 
-.match select {
+.match .match-team-selection {
     margin: 5% 2%;
 }
 
-.match select:enabled {
+.match .match-team-selection:enabled {
     width: 30%;
 }
 
@@ -177,4 +177,10 @@ select:disabled {
 
 select {
     text-align-last: center;
+}
+
+.organize-next-rounds {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }

@@ -17,6 +17,7 @@
     <!-- <script src="js/popup.js" defer></script> -->
     <script src="js/startRound.js" defer></script>
     <script src="js/team.js" defer></script>
+    <script src="js/match.js" defer></script>
     <script src="js/group.js" defer></script>
     <script src="js/round.js" defer></script>
     <script src="js/tournament.js" defer></script>
