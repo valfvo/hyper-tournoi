@@ -246,6 +246,10 @@
     margin: 2%;
 }
 
+.match {
+    margin-bottom: 5px;
+}
+
 .match .match-score {
     width: 15%;
     margin: 2%;

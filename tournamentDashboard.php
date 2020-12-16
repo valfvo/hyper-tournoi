@@ -1,4 +1,10 @@
-<?php session_start();?>
+<?php
+session_start();
+$currUID = $_SESSION['UID'];
+if (!isset($currUID) || $currUID == -1) {
+    header("Location: https://project.fvostudio.com/HyperTournoi/");
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,11 +16,12 @@
     <link href="css/header.css" rel="stylesheet">
     <link href="css/popup.css" rel="stylesheet">
     <link href="css/tournament.css" rel="stylesheet">
+    <link href="css/form.css" rel="stylesheet">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Quicksand&display=swap" rel="stylesheet">
 
-    <!-- <script src="js/popup.js" defer></script> -->
+    <script src="js/popup.js" defer></script>
     <script src="js/team.js" defer></script>
     <script src="js/match.js" defer></script>
     <script src="js/group.js" defer></script>
@@ -25,8 +32,8 @@
 
 <body>
     <?php
-    include("header.html");
     include("DBConnection.php");
+    include("header.php");
 
     if(isset($_POST["sessionTournament"])) {
         $_SESSION['currTournamentID'] = $_POST["sessionTournament"];

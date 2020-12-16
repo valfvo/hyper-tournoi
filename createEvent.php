@@ -1,15 +1,20 @@
 <?php
 session_start();
+$currUID = $_SESSION['UID'];
+if (!isset($currUID) || $currUID == -1) {
+    header("Location: https://project.fvostudio.com/HyperTournoi/");
+}
 
-include("header.html");
+include("header.php");
 include("DBConnection.php");
 
 $eventName = $_GET["event-name"];
 $eventLocation = $_GET["event-location"];
 $eventStartDate = $_GET["event-start-date"];
 $eventEndDate = $_GET["event-end-date"];
-$dbh->query("INSERT INTO Evenement (nom, lieu, dateDebut, dateFin)
-             VALUES ('$eventName', '$eventLocation', '$eventStartDate', '$eventEndDate')");
+
+$dbh->query("INSERT INTO Evenement (nom, idOrganisateur, lieu, dateDebut, dateFin)
+             VALUES ('$eventName', $currUID, '$eventLocation', '$eventStartDate', '$eventEndDate')");
 $_SESSION['currEventID'] = $dbh->lastInsertId();
 header("Location: https://project.fvostudio.com/HyperTournoi/eventDashboard.php");
 // echo $dbh->errorInfo()[0];

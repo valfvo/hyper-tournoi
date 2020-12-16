@@ -1,7 +1,11 @@
 <?php
 session_start();
-
-// include("header.html");
+session_start();
+$currUID = $_SESSION['UID'];
+if (!isset($currUID) || $currUID == -1) {
+    header("Location: https://project.fvostudio.com/HyperTournoi/");
+}
+include("header.php");
 include("DBConnection.php");
 
 $tournamentName = $_GET["tournament-name"];

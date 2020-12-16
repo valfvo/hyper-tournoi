@@ -1,4 +1,10 @@
-<?php session_start();?>
+<?php
+session_start();
+$currUID = $_SESSION['UID'];
+if (!isset($currUID) || $currUID == -1) {
+    header("Location: https://project.fvostudio.com/HyperTournoi/");
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -6,10 +12,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hyper Tournoi</title>
     <link href="images/favicon.ico" rel="icon">
-    <link rel="preload" href="images/close-icon-hover.svg" as="image">
 
     <link href="css/header.css" rel="stylesheet">
     <link href="css/popup.css" rel="stylesheet">
+    <link href="css/form.css" rel="stylesheet">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Quicksand&display=swap" rel="stylesheet">
@@ -20,7 +26,7 @@
 
 <body>
     <?php
-    include("header.html");
+    include("header.php");
     include("DBConnection.php");
     ?>
 

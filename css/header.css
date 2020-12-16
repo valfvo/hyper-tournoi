@@ -67,3 +67,89 @@ header .log:hover {
 /* li a:hover {
     background-color: #111;
 } */
+
+.small-header {
+    margin: 20px 50px;
+    color: var(--hyper-blue);
+    font-size: 1.7em;
+    border-bottom: 2px solid var(--hyper-blue);
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+.participate-list {
+    margin: 0px 15%;
+    padding: 0px;
+}
+
+.participate-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.participate-button {
+    border: 2px solid var(--hyper-blue);
+    border-radius: 3px;
+    background: white;
+    color: var(--hyper-blue);
+    padding: 10px;
+    font-family: 'Montserrat';
+    font-weight: bold;
+}
+
+.participate-button:hover {
+    cursor: pointer;
+    background: var(--hyper-blue);
+    color: white;
+}
+
+.no-click:hover {
+    cursor: default;
+}
+
+.player-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+}
+
+.player-info > label:not(:first-child) {
+    margin-top: 15px;
+}
+
+.player-team-label {
+    flex-basis: 100%;
+    align-self: center;
+    text-align: center;
+}
+
+.player-team-input {
+    margin: auto;
+}
+
+.validate-participation {
+    flex-basis: 100%;
+    margin: 10px 100%;
+    padding: 5px 15px;
+    background: white;
+    color: var(--hyper-blue);
+    border: 2px solid var(--hyper-blue);
+    border-radius: 3px;
+    font-family: 'Montserrat';
+}
+
+.validate-participation:hover {
+    cursor: pointer;
+    background: var(--hyper-blue);
+    color: white;
+}
+
+.team-name-input {
+    flex-basis: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: right;
+}

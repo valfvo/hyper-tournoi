@@ -229,8 +229,6 @@ class Round {
         winnersLeaderboard.sort(Team.compare);
         this.leaderboard = losersLeaderboard.concat(winnersLeaderboard);
 
-        console.log(this.leaderboard);
-
         if (this.isLosersRound()) return;
 
         const winnerCount = this.winnersPerGroup * this.groups.length;
@@ -368,6 +366,9 @@ class Round {
     }
 
     start(event) {
+        for (const group of this.groups) {
+            if (group.teams.length < 2) return;
+        }
         // const roundId = event.target.dataset.roundId;
         event.target.remove();  // remove startButton
 
@@ -412,7 +413,6 @@ class Round {
                     const lastLoser = 
                         round.teams.length - round.winnersPerGroup * round.groups.length;
                     leaderboard = leaderboard.concat(round.leaderboard.slice(0, lastLoser));
-                    console.log(round.leaderboard.slice(0, lastLoser));
                 }
             }
         }
