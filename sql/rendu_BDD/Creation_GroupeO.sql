@@ -459,6 +459,11 @@ INSERT INTO Tournoi (idEvenement, nom, sport, tailleEquipe,
                      dateDebutInscription, dateFinInscription)
 VALUES (1, 'Principal', 'Volley', 3, '2020-05-14', '2020-07-01');
 
+INSERT INTO Tournoi (idEvenement, nom, sport, tailleEquipe,
+                     dateDebutInscription, dateFinInscription)
+VALUES (1, 'Principal - Consolante', 'Volley', 3, '2020-07-02', '2020-07-02');
+
+INSERT INTO CommenceApres VALUES (1, 2, 1);
 -- ========================== Insertions des équipes ===========================
 CALL print_msg('===== Insertions des équipes =====');
 
