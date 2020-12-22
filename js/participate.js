@@ -26,7 +26,7 @@ function addParticipateForm(event) {
     form.action = 'inscription.php';
 
     const gameType = event.target.dataset.gameType;
-    const playersCount = gameType.split('x')[0];
+    const playersCount = gameType;
     const hiddenPlayerCount = document.createElement('input');
     hiddenPlayerCount.name = 'players-count';
     hiddenPlayerCount.value = playersCount;
